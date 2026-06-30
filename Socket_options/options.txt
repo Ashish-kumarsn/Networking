@@ -1,0 +1,87 @@
+So there are basically 6 options in the socket to redesign it as per the need
+
+Command to set options
+setsockopt(socket , level, option, value, sizeof(value));
+
+1. SO_REUSEADDR:
+
+    when a server restart quickly the bind() may fails . 
+    but why ?? because there is TIME_WAIT for which the previous server
+    will hold the address and ip . This bind will say addressin use 
+
+    Solution
+    Enable SO_REUSEADDR before bind().
+
+    setsockopt(sock,
+           SOL_SOCKET,
+           SO_REUSEADDR,
+           &opt,
+           sizeof(opt));
+
+2. SO_REUSEPORT:
+
+    Allows multiple sockets/processes to bind to the same IP address and port simultaneously.
+    Used to distribute incoming connections across multiple server processes,
+    improving scalability and CPU utilization.
+
+    setsockopt(sock,
+           SOL_SOCKET,
+           SO_REUSEPORT,
+           &opt,
+           sizeof(opt));
+    
+    used in ngnix and apache 
+
+3. SO_KEEPALIVE:
+
+    If a client crashes or loses power without sending a FIN, 
+    the server may keep the connection open forever.
+
+    if the connectionn is established and the packets are not being tranfered then 
+    the server will send small TCP probe , if no reply after frequent time then 
+    connection is closed .
+
+    setsockopt(sock,
+           SOL_SOCKET,
+           SO_KEEPALIVE,
+           &opt,
+           sizeof(opt));
+
+4. SO_RCVBUF:
+
+    Changes the size of the socket's Receive Buffer.
+    setsockopt(sock,
+           SOL_SOCKET,
+           SO_RCVBUF,
+           &size,
+           sizeof(size));
+
+5. SO_SNDBUF:
+
+    Changes the size of the socket's Send Buffer.
+    setsockopt(sock,
+           SOL_SOCKET,
+           SO_SNDBUF,
+           &size,
+           sizeof(size));
+
+6. TCP_NODELAY:
+
+    Disables Nagle's Algorithm, causing TCP to send small packets immediately.
+    Nagle combines small packets to reduce network overhead, but this introduces latency.
+    setsockopt(sock,
+           IPPROTO_TCP,
+           TCP_NODELAY,
+           &opt,
+           sizeof(opt));
+    
+    send(..,h,..);
+    send(..,e,..);
+    send(..,l,..);
+    send(..,l,..);
+    send(..,o,..);
+
+    instead of sending one by one naggle collect them and send them as a packet.
+
+    Disbale nodeplay algo and send packet immediately
+    
