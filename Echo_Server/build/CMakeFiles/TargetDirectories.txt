@@ -1,3 +1,0 @@
-/home/ashish/work/Networking/Echo_Server/build/CMakeFiles/EchoServer.dir
-/home/ashish/work/Networking/Echo_Server/build/CMakeFiles/edit_cache.dir
-/home/ashish/work/Networking/Echo_Server/build/CMakeFiles/rebuild_cache.dir
