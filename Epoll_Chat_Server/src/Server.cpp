@@ -8,11 +8,13 @@
 #include <sys/epoll.h>
 #include <fcntl.h>
 
-EpollServer::EpollServer() : ServerSocket(-1),
-                             EpollFd(-1),
-                             Port(8080)
+EpollServer::EpollServer(int Port)
+    : ServerSocket(-1),
+      EpollFd(-1),
+      Port(Port)
 {
     std::memset(&serverAddress, 0, sizeof(serverAddress));
+    std::memset(&clientAddress, 0, sizeof(clientAddress));
 }
 
 EpollServer::~EpollServer()
@@ -185,12 +187,12 @@ void EpollServer::acceptClient()
 
 void EpollServer::handleClientMessages(int ClientFd)
 {
-    std::memset(buffer, 0, sizeof(buffer));
+    std::memset(Buffer, 0, sizeof(Buffer));
 
     int BytesReceived = recv(
         ClientFd,
-        buffer,
-        sizeof(buffer),
+        Buffer,
+        sizeof(Buffer),
         0);
 
     if (BytesReceived == 0)
@@ -205,7 +207,7 @@ void EpollServer::handleClientMessages(int ClientFd)
         removeClient(ClientFd);
         return;
     }
-    std::string Message(buffer, BytesReceived);
+    std::string Message(Buffer, BytesReceived);
     std::cout << "Client" << ClientFd << ":" << Message << std::endl;
     broadcastMessage(Message, ClientFd);
 }
@@ -232,7 +234,6 @@ void EpollServer::broadcastMessage(const std::string &Message, int SenderFd)
         }
     }
 }
-
 
 void EpollServer::removeClient(int ClientFd)
 {
